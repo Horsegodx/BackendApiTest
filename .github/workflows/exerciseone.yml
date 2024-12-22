@@ -1,0 +1,35 @@
+name: Build and Format Check
+
+on:
+  push:
+    branches:
+      - "**" # Запускается для всех веток
+  pull_request:
+
+jobs:
+  build:
+    name: Build and Format Check
+    runs-on: ubuntu-latest
+
+    steps:
+      # Шаг 1. Клонируем репозиторий
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Шаг 2. Устанавливаем .NET SDK
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 7.x # Укажите версию .NET SDK, используемую в вашем проекте
+
+      # Шаг 3. Восстанавливаем зависимости
+      - name: Restore dependencies
+        run: dotnet restore
+
+      # Шаг 4. Собираем проект
+      - name: Build the project
+        run: dotnet build --no-restore --configuration Release
+
+      # Шаг 5. Проверяем форматирование кода с помощью dotnet-format
+      - name: Check code formatting
+        run: dotnet format --verify-no-changes
